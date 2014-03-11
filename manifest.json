@@ -1,0 +1,25 @@
+{
+	"name": "Gomez GPN Account Manager Extension",
+	"version": "2.2",
+	"description": "Manage usernames/passwords for your favorite GPN accounts",
+	"manifest_version": 2,
+	"update_url": "http://gomez.karytko.com/downloads/chromeextension/updates.xml",
+	"options_page": "options.html",
+	"browser_action": {
+		"default_icon": "icon.png",
+		"default_title": "Gomez Login Manager",
+		"default_popup": "popup.html"
+	},
+	"icons": {
+		"16": "icon.png",
+		"48": "icon.png",
+		"128": "icon.png"
+	},
+	"permissions": [
+		"storage",
+		"tabs",
+		"cookies",
+		"http://*/*",
+		"https://*/*"
+	]
+}

@@ -1,0 +1,36 @@
+body {
+	min-width:200px;
+	overflow-x:hidden;
+	color:#666;
+	font-family:arial;
+	font-size:13px;
+}
+ul {
+	margin:0px;
+	padding:0px;
+	list-style-type:none;
+}
+a {
+	color:#666;
+	border:1px solid #fff;
+	display:block;
+	padding:4px 8px;
+	text-decoration:none;
+	-webkit-border-radius:4px;
+}
+a:hover {
+	background-color:#efefef;
+	background:-webkit-gradient(linear, left top, left bottom, from(#fff), to(#efefef));
+	border:1px solid #ccc;
+	text-decoration:underline;
+}
+hr {
+	height:1px;
+	margin:4px 0px;
+	padding:0px;
+	border:0px;
+	background-color:#ccc;
+}
+li p {
+	padding:4px 8px;
+}

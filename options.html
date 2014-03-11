@@ -1,0 +1,57 @@
+<html>
+<head>
+	<title>Gomez Extension Options</title>
+	<link rel="stylesheet" href="css/screen.css" type="text/css" media="screen, projection"> 
+	<link rel="stylesheet" href="css/options.css" type="text/css" media="screen, projection">
+	<link rel="stylesheet" href="css/south-street/jquery-ui-1.10.3.custom.min.css" type="text/css" media="screen, projection"> 
+	<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script type="text/javascript" src="js/options.js"></script>
+</head>
+<body>
+	<div id="header" class="container">
+		<div id="logo" class="span-5 prepend-1"></div>
+		<div class="span-12 append-6 last">
+			<h1>Options</h1>
+		</div>
+	</div>
+	<div id="main" class="container">
+		<div class="span-22 prepend-1 append-1 last">
+			<h3>Manage Logins:</h3>
+		</div>
+		<div class="span-4 prepend-2">
+			<label>Name</label>
+		</div>
+		<div class="span-4">
+			<label>Username</label>
+		</div>
+		<div class="span-4">
+			<label>Password</label>
+		</div>
+		<div class="span-4 append-6 last">
+			<label>Beta</label>
+		</div>
+		<div class="span-18 prepend-2">
+			<div id="lines"></div>
+		</div>
+		<div class="span-2 append-2 last">
+			<button id="addLine">+ Add</button>
+		</div>
+		<div id="actionBar" class="span-22 prepend-1 append-1 last">
+			<button id="btnSave">Save</button>
+			<button id="btnShowOptionsJSON">Import/Export</button>
+		</div>
+		<div id="modalDialog">
+			<h4>Instructions:</h4>
+			<p>
+				To Export: Copy  and paste the JSON text to file.<br />
+				To Import: Copy JSON text from file, and paste into textbox.  Click Import/Update button.
+				
+				(Remember to hit save when you are done.)
+			</p>
+			
+			<textarea id="txtOptionsJSON"></textarea>
+		</div>
+	</div>
+</body>
+</html>
