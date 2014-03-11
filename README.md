@@ -14,7 +14,7 @@ Chrome extension for managing user logins for Gomez (GPN) and APM portals.
 
 ## Installation
 
-1. Right-click on the following URL, and select Save link as…
+1. Click on the following link to download the extension:
 	http://gomez.karytko.com/chrome-extension/gomez-chrome.crx
 2. In your Chrome browser, click the Chrome menu on the browser toolbar, and select Tools > Extensions.
 3. Drag the extension (.crx) file onto the Extensions page in the browser, and accept any warnings.
