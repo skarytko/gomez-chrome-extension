@@ -1,5 +1,6 @@
 body {
-	min-width:200px;
+	padding: 10px;
+	min-width:250px;
 	overflow-x:hidden;
 	color:#666;
 	font-family:arial;
@@ -10,19 +11,23 @@ ul {
 	padding:0px;
 	list-style-type:none;
 }
-a {
+li.list-item, li.link-item a  {
+	position: relative;
+	display: block;
 	color:#666;
 	border:1px solid #fff;
-	display:block;
 	padding:4px 8px;
 	text-decoration:none;
 	-webkit-border-radius:4px;
 }
-a:hover {
+li.list-item:hover, li.link-item a:hover {
 	background-color:#efefef;
 	background:-webkit-gradient(linear, left top, left bottom, from(#fff), to(#efefef));
 	border:1px solid #ccc;
-	text-decoration:underline;
+	color: #333;
+}
+li.list-item {
+	cursor: default;
 }
 hr {
 	height:1px;
@@ -33,4 +38,9 @@ hr {
 }
 li p {
 	padding:4px 8px;
+}
+.portal-links {
+	position: absolute;
+	right: 8px;
+	top: 4px;
 }

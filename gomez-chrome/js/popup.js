@@ -1,14 +1,55 @@
+var DYNATRACE_PORTAL_URL = 'https://portal.dynatrace.com';
+var GPN_PORTAL_URL = 'https://www.gomeznetworks.com';
+
 $(document).ready(function() {
 	getList();
-	
+	/*
 	$('#blankLogin').click(function() {
 		logoutLogin("http://www.gomeznetworks.com/login.asp");	
 	});
-	
+	*/
 	$('#optionsPage').click(function() {
 		chrome.tabs.create({url: 'options.html'});
-	})
+	});
+	
+	$('#userList').on('mouseover', 'li', function() {
+		$(this).find('.portal-links').removeClass('hidden');
+		$(this).find('.portal-links').addClass('show');
+	});
+	
+	$('#userList').on('mouseout', 'li', function() {
+		$(this).find('.portal-links').removeClass('show');
+		$(this).find('.portal-links').addClass('hidden');
+	});
+	
+	$('#userList').on('click', 'li .portal-links a', function() {
+		var portal = $(this).data('portal');
+		var nickname = $(this).data('nickname');
+		
+		findAccount(nickname, function(account) {
+			login(portal, account.username, account.password);
+		});
+	});
+	
 });
+
+function findAccount(nickname, callback) {
+	chrome.storage.local.get(null, function(items) {
+		if (accounts = items.logins) {	
+				
+			accounts.every(function(account) {
+				if (nickname == account.nickname) {
+					callback(account);
+					
+					return false;
+				}
+				
+				return true;
+			});
+			
+		}
+	});
+}
 
 function getList() {
 	chrome.storage.local.get(null, function(items) {
@@ -22,61 +63,81 @@ function getList() {
 	});
 }
 
-function logoutLogin(actionURL) {
-	var v = 0;
-	
-	// Logout of APM Portal
-	chrome.cookies.getAll({domain: "gomezapm.com", path: "/"}, function(cookies) {
-		$.ajax({
-			url: "http://www.gomezapm.com/c/portal/logout",
-			headers: {"Cookie": cookies.join(";")},
-			complete: function() {
-				v++;
-				updateTab(actionURL);
-			}
-		});
-	});
-
-	// Logout of GPN Portal
-	$.ajax({
-		url: "http://www.gomeznetworks.com/closesession.asp",
-		complete: function() {
-			$.ajax({
-				type: "post",
-				url: "http://www.gomeznetworks.com/setsession.asmx/abandonSession",
-				complete: function() {
-					v++;
-					updateTab(actionURL);
-				}
-			})
-		}
-	});
-	
-	function updateTab(actionURL) {
-		if (v == 2) {
-			// Update current tab
-			chrome.tabs.getSelected(null, function (tab) {
-				chrome.tabs.update(tab.id, {url: actionURL});
-			});
-		}
+function login(portal, username, password) {
 		
-		return false;
+	portal = portal || 'dynatrace';
+
+	if (portal === 'gpn') {
+		
+		var loginUrl = GPN_PORTAL_URL + "/login.asp?login.x=1&username=" + encodeURIComponent(username) + "&pwd=" + encodeURIComponent(password) + "&gmz=1";
+
+		updateCurrentTab(loginUrl);
+	
+	} else {
+		
+		var loginUrl = DYNATRACE_PORTAL_URL + '/login.htm';
+		var postData = 'username=' + encodeURIComponent(username) + '&pw=' + encodeURIComponent(password) + '&signIn=Login';
+		var xhr = new XMLHttpRequest();
+		
+		xhr.open('POST', loginUrl, true);
+		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState == 2) {
+				console.log(xhr.responseURL);
+				var redirectURL = xhr.responseURL;
+				xhr.abort();
+				updateCurrentTab(redirectURL);
+			}
+		}
+		xhr.send(postData);
+		
 	}
+	
 }
 
-function addLine(info) {
-	var domain = (info.isBeta) ? 'beta.gomeznetworks.com' : 'www.gomeznetworks.com';
-	var actionURL = "http://" + domain + "/login.asp?login.x=1&username=" + encodeURIComponent(info.username) + "&pwd=" + encodeURIComponent(info.password) + "&gmz=1"; 
-	var userList = $("#userList");
-	var li = $('<li>');
-	var anchor = $('<a>');
-	var label = (info.nickname) ? info.nickname : info.username; 
-	anchor.text(label);
-	anchor.attr('href', '#');
-	anchor.click(function() {
-		logoutLogin(actionURL);
-	});
+function logout(portal) {
 	
-	li.append(anchor);
+	portal = portal || 'dynatrace';
+
+	if (portal === 'gpn') {
+		
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', 'http://www.gomeznetworks.com/closesession.asp', true);
+		xhr.send();
+		
+		xhr.open('GET', 'http://www.gomeznetworks.com/setsession.asmx/abandonSession', true);
+		xhr.send();
+	
+	} else {
+	
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', 'http://cr02.dynatrace.com/c/portal/logout', true);
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState == 2) xhr.abort();
+		};
+		xhr.send();
+		
+		xhr.open('GET', 'http://cr01.dynatrace.com/closesession.asp', true);
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState == 2) xhr.abort();
+		};
+		xhr.send();
+	}
+	
+};
+
+function updateCurrentTab(url) {
+	
+	chrome.tabs.getSelected(null, function (tab) {
+		chrome.tabs.update(tab.id, { url: url });
+	});
+
+}
+
+function addLine(account) {
+	var userList = $("#userList");
+	var li = $('<li class="list-item">' + account.nickname + '<div class="portal-links hidden"><a href="#" data-portal="gpn" data-nickname="' + account.nickname + '">GPN</a><span>&nbsp;|&nbsp;</span><a href="#" data-portal="dynatrace" data-nickname="' + account.nickname + '">DYN</a></div></li>');
+
 	userList.append(li);
+
 }

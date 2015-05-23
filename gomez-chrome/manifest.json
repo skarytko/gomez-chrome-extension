@@ -1,19 +1,18 @@
 {
-	"name": "Gomez GPN Account Manager Extension",
-	"version": "2.2",
-	"description": "Manage usernames/passwords for your favorite GPN accounts",
+	"name": "Dynatrace APMaaS Portal Login Manager",
+	"version": "3.0.0",
+	"description": "Manage usernames/passwords for your favorite Dynatrace APMaaS accounts",
 	"manifest_version": 2,
-	"update_url": "http://gomez.karytko.com/downloads/chromeextension/updates.xml",
 	"options_page": "options.html",
 	"browser_action": {
 		"default_icon": "icon.png",
-		"default_title": "Gomez Login Manager",
+		"default_title": "Dynatrace APMaaS Portal Login Manager",
 		"default_popup": "popup.html"
 	},
 	"icons": {
-		"16": "icon.png",
-		"48": "icon.png",
-		"128": "icon.png"
+		"16": "icon-small.png",
+		"48": "icon-medium.png",
+		"128": "icon-large.png"
 	},
 	"permissions": [
 		"storage",
