@@ -8,26 +8,29 @@ $(document).ready(function() {
 		logoutLogin("http://www.gomeznetworks.com/login.asp");	
 	});
 	*/
+
 	$('#optionsPage').click(function() {
 		chrome.tabs.create({url: 'options.html'});
 	});
 	
 	$('#userList').on('mouseover', 'li', function() {
-		$(this).find('.portal-links').removeClass('hidden');
-		$(this).find('.portal-links').addClass('show');
+		$(this).find('.link-secondary').removeClass('hidden');
+		$(this).find('.link-secondary').addClass('show');
 	});
 	
 	$('#userList').on('mouseout', 'li', function() {
-		$(this).find('.portal-links').removeClass('show');
-		$(this).find('.portal-links').addClass('hidden');
+		$(this).find('.link-secondary').removeClass('show');
+		$(this).find('.link-secondary').addClass('hidden');
 	});
 	
-	$('#userList').on('click', 'li .portal-links a', function() {
+	$('#userList').on('click', 'a.link-primary, a.link-secondary', function() {
 		var portal = $(this).data('portal');
 		var nickname = $(this).data('nickname');
 		
 		findAccount(nickname, function(account) {
+			
 			login(portal, account.username, account.password);
+			
 		});
 	});
 	
@@ -75,27 +78,31 @@ function login(portal, username, password) {
 	
 	} else {
 		
-		var loginUrl = DYNATRACE_PORTAL_URL + '/login.htm';
-		var postData = 'username=' + encodeURIComponent(username) + '&pw=' + encodeURIComponent(password) + '&signIn=Login';
-		var xhr = new XMLHttpRequest();
+		logout(portal, function() {
 		
-		xhr.open('POST', loginUrl, true);
-		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		xhr.onreadystatechange = function() {
-			if (xhr.readyState == 2) {
-				console.log(xhr.responseURL);
-				var redirectURL = xhr.responseURL;
-				xhr.abort();
-				updateCurrentTab(redirectURL);
+			var loginUrl = DYNATRACE_PORTAL_URL + '/login.htm';
+			var postData = 'username=' + encodeURIComponent(username) + '&pw=' + encodeURIComponent(password) + '&signIn=Login';
+			var xhr = new XMLHttpRequest();
+		
+			xhr.open('POST', loginUrl, true);
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState == 2) {
+					console.log(xhr.responseURL);
+					var redirectURL = xhr.responseURL;
+					xhr.abort();
+					updateCurrentTab(redirectURL);
+				}
 			}
-		}
-		xhr.send(postData);
+			xhr.send(postData);
+		
+		});
 		
 	}
 	
 }
 
-function logout(portal) {
+function logout(portal, callback) {
 	
 	portal = portal || 'dynatrace';
 
@@ -107,24 +114,75 @@ function logout(portal) {
 		
 		xhr.open('GET', 'http://www.gomeznetworks.com/setsession.asmx/abandonSession', true);
 		xhr.send();
+		
+		if (callback) callback();
 	
 	} else {
-	
-		var xhr = new XMLHttpRequest();
-		xhr.open('GET', 'http://cr02.dynatrace.com/c/portal/logout', true);
-		xhr.onreadystatechange = function() {
-			if (xhr.readyState == 2) xhr.abort();
-		};
-		xhr.send();
 		
-		xhr.open('GET', 'http://cr01.dynatrace.com/closesession.asp', true);
-		xhr.onreadystatechange = function() {
-			if (xhr.readyState == 2) xhr.abort();
-		};
-		xhr.send();
+		var getPortalCookies = getCookies({ domain: 'portal.dynatrace.com' });
+		var getCR02Cookies = getCookies({ domain: 'cr02.dynatrace.com' });
+		
+		$.when(getPortalCookies, getCR02Cookies).done(function(portalCookies, cr02Cookies) {
+			
+			removeCookies(portalCookies);
+			removeCookies(cr02Cookies);
+
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', 'http://cr02.dynatrace.com/c/portal/logout', true);
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState == 2) xhr.abort();
+			};
+			xhr.send();
+		
+			xhr.open('GET', 'http://cr01.dynatrace.com/closesession.asp', true);
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState == 2) xhr.abort();
+			};
+			xhr.send();
+			
+			if (callback) callback();
+			
+		}).fail(function(err) {
+			
+			console.log(err);
+			
+		});
 	}
 	
 };
+
+function getCookies(options) {
+	
+	var defer = $.Deferred();
+	var promise = defer.promise();
+	
+	chrome.cookies.getAll(options, function(cookies) {
+	
+		defer.resolve(cookies);
+	
+	});
+	
+	return promise;
+	
+}
+
+function removeCookie(cookie) {
+	
+	var url = "http" + (cookie.secure ? "s" : "") + "://" + cookie.domain + cookie.path;
+	
+	chrome.cookies.remove({ url: url, name: cookie.name });
+	
+}
+
+function removeCookies(cookies) {
+	
+	cookies.forEach(function(cookie) {
+
+		removeCookie(cookie);
+
+	});
+	
+}
 
 function updateCurrentTab(url) {
 	
@@ -136,7 +194,7 @@ function updateCurrentTab(url) {
 
 function addLine(account) {
 	var userList = $("#userList");
-	var li = $('<li class="list-item">' + account.nickname + '<div class="portal-links hidden"><a href="#" data-portal="gpn" data-nickname="' + account.nickname + '">GPN</a><span>&nbsp;|&nbsp;</span><a href="#" data-portal="dynatrace" data-nickname="' + account.nickname + '">DYN</a></div></li>');
+	var li = $('<li class="list-item"><a href="#" class="link-primary" data-portal="dynatrace" data-nickname="' + account.nickname + '">' + account.nickname + '<a href="#" class="link-secondary hidden" data-portal="gpn" data-nickname="' + account.nickname + '">GPN</a></a></li>');
 
 	userList.append(li);
 

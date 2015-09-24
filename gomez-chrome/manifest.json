@@ -1,11 +1,11 @@
 {
 	"name": "Dynatrace APMaaS Portal Login Manager",
-	"version": "3.0.0",
+	"version": "3.1.0",
 	"description": "Manage usernames/passwords for your favorite Dynatrace APMaaS accounts",
 	"manifest_version": 2,
 	"options_page": "options.html",
 	"browser_action": {
-		"default_icon": "icon.png",
+		"default_icon": "icon-large.png",
 		"default_title": "Dynatrace APMaaS Portal Login Manager",
 		"default_popup": "popup.html"
 	},

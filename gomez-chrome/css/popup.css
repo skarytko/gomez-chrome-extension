@@ -1,33 +1,72 @@
+:focus {
+	outline: none;
+}
 body {
 	padding: 10px;
+	margin: 0px;
 	min-width:250px;
 	overflow-x:hidden;
 	color:#666;
 	font-family:arial;
 	font-size:13px;
 }
+.hidden {
+	display: none!important;
+}
+.show {
+	display: block!important;	
+}
 ul {
 	margin:0px;
 	padding:0px;
 	list-style-type:none;
 }
-li.list-item, li.link-item a  {
+li.list-item  {
+	margin: 0px;
+	padding: 0px;
 	position: relative;
 	display: block;
 	color:#666;
 	border:1px solid #fff;
-	padding:4px 8px;
-	text-decoration:none;
-	-webkit-border-radius:4px;
 }
-li.list-item:hover, li.link-item a:hover {
+li.list-item:hover {
+	background-color:#efefef;
+	-webkit-border-radius:4px;
+	background:-webkit-gradient(linear, left top, left bottom, from(#fff), to(#efefef));
+	border:1px solid #ccc;
+}
+li.list-item a, li.list-item a:visited {
+	text-decoration: none;
+}
+li.list-item a:hover {
+	color: #333;
+	text-decoration: underline;
+}
+li.list-item a {
+	color:#666;
+	display: block;
+	padding:4px 8px;
+}
+li.list-item a.link-secondary {
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	z-index: 101;
+}
+hr {
+	height:1px;
+	margin:4px 0px;
+	padding:0px;
+	border:0px;
+	background-color:#ccc;
+}
+
+/*
+li.list-item:hover, li.link-item a:hover, li.link-item a:visited {
 	background-color:#efefef;
 	background:-webkit-gradient(linear, left top, left bottom, from(#fff), to(#efefef));
 	border:1px solid #ccc;
 	color: #333;
-}
-li.list-item {
-	cursor: default;
 }
 hr {
 	height:1px;
@@ -39,8 +78,9 @@ hr {
 li p {
 	padding:4px 8px;
 }
-.portal-links {
+.alt-link {
 	position: absolute;
 	right: 8px;
 	top: 4px;
 }
+*/
